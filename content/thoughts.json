@@ -1,7 +1,7 @@
 [
   {
     "id": "1729446715035",
-    "content": "Flywheel v3 中要尽可能的与 Python 的描述符协议，至少是 `__get__` 保持一致，主要是要直接支持 `classmethod` 和 `property`（最好是）。后者可以直接替代掉 `Anycast`。此外是提供一个类似 `@property.setter` 的 `@endpoint.call` 实现，以可以在单个 identity 上同时使用 Collect 与 Call。\n\n我先写下以防止我忘掉：endpoint 默认的 call 返回的是 harvest，如果要实现 `@endpoint.call`，那么就得把这个返回 harvest 的 call 先实现为闭包，然后再用 partial 或其等价实现包起来。\n\n不知道什么时候才能把 sansio framework 点出来，这之前还有 awaitlet 集成得点出来，yanagi 也依赖于这个（或许不依赖，可以直接把 model 构造完连同 context 一起丢出去）。SansIO 可以直接实现例如 Matrix 和 ActivityPub 之类的，我比较感兴趣的实现，这方面的工作或许也有利于 Avilla —— 虽然标准化接口什么的仍然让人糟心，但至少这方面会迈出去结实的半步。",
+    "content": "Flywheel v3 中要尽可能的与 Python 的描述符协议，至少是 `__get__` 保持一致，主要是要直接支持 `classmethod` 和 `property`（最好是）。后者可以直接替代掉 `Anycast`。此外是提供一个类似 `@property.setter` 的 `@endpoint.call` 实现，以可以在单个 identity 上同时使用 Collect 与 Call。\n\n我先写下以防止我忘掉：endpoint 默认的 call 返回的是 harvest，如果要实现 `@endpoint.call`，那么就得把这个返回 harvest 的 call 先实现为闭包，然后再用 partial 或其等价实现包起来。此外如果按照这种方法，仍然需要和上面对待 collect 的方法一样，应用 `__get__` 描述符协议。\n\n不知道什么时候才能把 sansio framework 点出来，这之前还有 awaitlet 集成得点出来，yanagi 也依赖于这个（或许不依赖，可以直接把 model 构造完连同 context 一起丢出去）。SansIO 可以直接实现例如 Matrix 和 ActivityPub 之类的，我比较感兴趣的实现，这方面的工作或许也有利于 Avilla —— 虽然标准化接口什么的仍然让人糟心，但至少这方面会迈出去结实的半步。",
     "timestamp": "2024-10-20T17:51:55.035Z"
   }
 ]
