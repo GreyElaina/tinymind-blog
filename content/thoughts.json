@@ -1,5 +1,10 @@
 [
   {
+    "id": "1729610878772",
+    "content": "今天除了捣鼓 rtwo 的内核源码外啥也没干。\n\n其实也不是什么也没干，但是经过实验和他人经验，可以得知我之前尝试修改 `msm-poweroff` 有两点不可能：1）`msm-poweroff` 早就没有被启用且启用了也没法编译（ `ld.lld` 报告无法导入符号）；2）Motorola 系的设备**从不**进行 Warm Reboot，这意味着不可能通过 `ramoops` 获得 console 输出。\n\n所以我 drop changes。「所以我放弃了音乐。」搞什么鬼不可能放弃啊。\n\n其实也不是不可能，我找到了[这篇博文](https://blog.xzr.moe/archives/249/)，作者手动实现了一个 `logstore` 模块，将 `kernel/panic.c` 插入了 `do_logstore`，能将 kmsg 手动的写到一个文件上。\n原文作者是在他的 Oneplus 8T 上实施的，他提到这以平台基于 `msm-4.19`，显然需要移植到 rtwo 的 `5.10` 平台上。\n\n此外，原文作者将目的文件设做 `/mnt/oplus/op2/last_panic.txt`。显然这不适用于 rtwo 平台。我们需要一个在第一启动阶段（First Stage）就可用的分区。我翻阅 `fstab.qcom` 发现只有 `metadata` 是 rw（可写）的。Motorola Developers 群组称 ` metadata` 分区足足有大概 `60M` 的空间，我的平台上这个分区的空间使用情况是 ` 34.19M/62.00M `，据他们所说算是绰绰有余，我将其设作 `/metadata/kernel.log`。\n\n在之前的实验中，任一 GSI/DSU 环境都没能进入 Second Stage，在出现启动动画（boot animation）之前就发生了某种崩溃，关于发生了什么，MotoDev 的人员称其一定发生了某种 kernel panic，于是这点也得到确认，现在我需要一点时间去翻翻 kernel 的源码。\n\n关于移植，我几乎原封不动照抄的 patchset 当然没能通过编译，在 5.10 上，我们需要通过 `kmsg_dump_register` 来获取 `kmsg_dumper` 实例，也就是说 `panic.c` 上的修改需要丢弃：`kmsg_dump_register` 的范式是回调，这部分的入口点函数  `kmsg_dump`  会逐个调用 `dumper`，而 `panic.c` 和 `msm-poweroff` 也确实会调用这个……总之，按照 `kmsg_dump_register` 来。\n\n> `list_for_each_entry_rcu` 这个宏初印象感觉就是 foreach 嘛……算了，看得懂就行。\n\n",
+    "timestamp": "2024-10-22T15:27:58.772Z"
+  },
+  {
     "id": "1729446715035",
     "content": "Flywheel v3 中要尽可能的与 Python 的描述符协议，至少是 `__get__` 保持一致，主要是要直接支持 `classmethod` 和 `property`（最好是）。后者可以直接替代掉 `Anycast`。此外是提供一个类似 `@property.setter` 的 `@endpoint.call` 实现，以可以在单个 identity 上同时使用 Collect 与 Call。\n\n我先写下以防止我忘掉：endpoint 默认的 call 返回的是 harvest，如果要实现 `@endpoint.call`，那么就得把这个返回 harvest 的 call 先实现为闭包，然后再用 partial 或其等价实现包起来。此外如果按照这种方法，仍然需要和上面对待 collect 的方法一样，应用 `__get__` 描述符协议。\n\n不知道什么时候才能把 sansio framework 点出来，这之前还有 awaitlet 集成得点出来，yanagi 也依赖于这个（或许不依赖，可以直接把 model 构造完连同 context 一起丢出去）。SansIO 可以直接实现例如 Matrix 和 ActivityPub 之类的，我比较感兴趣的实现，这方面的工作或许也有利于 Avilla —— 虽然标准化接口什么的仍然让人糟心，但至少这方面会迈出去结实的半步。",
     "timestamp": "2024-10-20T17:51:55.035Z"
