@@ -1,5 +1,10 @@
 [
   {
+    "id": "1729699097839",
+    "content": "Launart v0.9.x 希望通过整理现有的实现，设计一致的同构接口，对畸形的曲线救国设计进行纠正以解决现有的问题。\n\n`Context` 将代替 `Manager` 参与到 Service 的 launch 中。通过 Context 中传递的由 manager 管理的 `sigexit` 和 `stage` 控制内部。然后造一套 serviceset 相关的 API 把服务的 task 全部用类似 TaskGroup、CancelScope 之类的做结构化并发。\n\n而结构化并发其实可以不要，因为「不一定 graceful 就是一定不 graceful」，但需要让现有的架构更完善许多；最主要的修改就是 Context 来解决之前很肮脏的实现，其他的都没有太大关系。\n\n打算将 Launart 的这次抽象也和 Sistana、Flywheel v3 一样先作为我的个人项目孵化。我主要实现的是 `Context`，以及改善 Sideload 的使用 —— 直接改成加入的时候以服务的簇为单位加入，然后解析完整依赖并更新到 Manager 里面。Drop `statv`，`async with context.{prepare, mainline, cleanup}(): ...` 啥的。我实在懒得想什么新的词了所以不用改了。\n\n行为上似乎没啥变动，除了 Sideload 的部分被清掉了都还行。除了我稍微克制了一下，保留了 `context.sigexit` 而不是用什么 `skippable` 之类的花活，也没有想着要写纯函数表示的 Launch API（但这个真的很吸引人），这次算是为了修 BUG 而做的保守的重构。",
+    "timestamp": "2024-10-23T15:58:17.839Z"
+  },
+  {
     "id": "1729610878772",
     "content": "今天除了捣鼓 rtwo 的内核源码外啥也没干。\n\n其实也不是什么也没干，但是经过实验和他人经验，可以得知我之前尝试修改 `msm-poweroff` 有两点不可能：1）`msm-poweroff` 早就没有被启用且启用了也没法编译（ `ld.lld` 报告无法导入符号）；2）Motorola 系的设备**从不**进行 Warm Reboot，这意味着不可能通过 `ramoops` 获得 console 输出。\n\n所以我 drop changes。「所以我放弃了音乐。」搞什么鬼不可能放弃啊。\n\n其实也不是不可能，我找到了[这篇博文](https://blog.xzr.moe/archives/249/)，作者手动实现了一个 `logstore` 模块，将 `kernel/panic.c` 插入了 `do_logstore`，能将 kmsg 手动的写到一个文件上。\n原文作者是在他的 Oneplus 8T 上实施的，他提到这以平台基于 `msm-4.19`，显然需要移植到 rtwo 的 `5.10` 平台上。\n\n此外，原文作者将目的文件设做 `/mnt/oplus/op2/last_panic.txt`。显然这不适用于 rtwo 平台。我们需要一个在第一启动阶段（First Stage）就可用的分区。我翻阅 `fstab.qcom` 发现只有 `metadata` 是 rw（可写）的。Motorola Developers 群组称 ` metadata` 分区足足有大概 `60M` 的空间，我的平台上这个分区的空间使用情况是 ` 34.19M/62.00M `，据他们所说算是绰绰有余，我将其设作 `/metadata/kernel.log`。\n\n在之前的实验中，任一 GSI/DSU 环境都没能进入 Second Stage，在出现启动动画（boot animation）之前就发生了某种崩溃，关于发生了什么，MotoDev 的人员称其一定发生了某种 kernel panic，于是这点也得到确认，现在我需要一点时间去翻翻 kernel 的源码。\n\n关于移植，我几乎原封不动照抄的 patchset 当然没能通过编译，在 5.10 上，我们需要通过 `kmsg_dump_register` 来获取 `kmsg_dumper` 实例，也就是说 `panic.c` 上的修改需要丢弃：`kmsg_dump_register` 的范式是回调，这部分的入口点函数  `kmsg_dump`  会逐个调用 `dumper`，而 `panic.c` 和 `msm-poweroff` 也确实会调用这个……总之，按照 `kmsg_dump_register` 来。\n\n> `list_for_each_entry_rcu` 这个宏初印象感觉就是 foreach 嘛……算了，看得懂就行。\n\n",
     "timestamp": "2024-10-22T15:27:58.772Z"
