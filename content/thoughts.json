@@ -1,7 +1,7 @@
 [
   {
     "id": "1729869473609",
-    "content": "Flywheel 还是不怎么想做。\nLaunart 的重构将不可避免的破坏向前兼容性（API 接口变动）。\nYanagi 需要在 Flywheel 之后，并且架构还没完全确定。\nCronet / Cryonet……最好的办法是从 Google 的 Mojo HDL 生成出 C++ Bindings / Header，再使用 Cython 自带的 C++ Binding 功能与其交互。但这样需要改动由 `naiveproxy` 构造的构建系统（`gh:GreyElaina/cronet-binaries`）。\n",
+    "content": "Flywheel 还是不怎么想做。  \nLaunart 的重构将不可避免的破坏向前兼容性（API 接口变动）。  \nYanagi 需要在 Flywheel 之后，并且架构还没完全确定。  \nCronet / Cryonet……最好的办法是从 Google 的 Mojo HDL 生成出 C++ Bindings / Header，再使用 Cython 自带的 C++ Binding 功能与其交互。但这样需要改动由 `naiveproxy` 构造的构建系统（`gh:GreyElaina/cronet-binaries`）。\n",
     "timestamp": "2024-10-25T15:17:53.609Z"
   },
   {
