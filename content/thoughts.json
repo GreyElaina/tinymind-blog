@@ -1,5 +1,10 @@
 [
   {
+    "id": "1733661975623",
+    "content": "Sistana 的 options 管理略失败，给 Yanagi 添了一些堵。",
+    "timestamp": "2024-12-08T12:46:15.623Z"
+  },
+  {
     "id": "1733423042253",
     "content": "Framework 几乎没动过……没有主要枝干的话是没法突然开出花来的。需要实现 Avilla 的 Account Gateway，还是不要用什么 `qq://elaina@main/...` 的鬼畜玩意了，这只是呈现，没有接口平面的废物罢了，但对这两者，如果没有特别意识到前者的交互贫乏，会很容易混淆起来。\n说到底，人是不知道自己到底要什么的，毕竟在得到之前都没法准确描述，脑中的印象也会因认知改变。\n上下文和事件描述两者本身就是冲突的……我们在 Avilla 中因此吃的苦太多了。\n或许用 Entrypoint 避免使用模型类或许是可行的，模型类本身相对独立，但依赖的上下文生命周期太短，强制传递的信息以函数传参的方式，将生命周期绑定在业务逻辑上或许可行。虽然这样就无法使用 FastAPI 形式的 Depends，而需要使用描述符等方法。\n之前我提出通过私有协定，setattr 在 method fn 上，类似 yanagi 在 `__init_subclass__`，或是采用装饰器方法扫描成员 —— 构造相应的 `CollectContext`。这种方法的问题只有严重依赖 `Selection`，但我觉得没法解决。\n比如说消息发出的事件 `on_message_created`，写成 `on_message_created(cx: Context, sender: Any, target: Any, message: Any, **kwargs)`。\n这个 `**kwargs` 是认真的吗……？还是感觉这样不可行，说到底我们要的到底是什么？\n",
     "timestamp": "2024-12-05T18:24:02.253Z"
