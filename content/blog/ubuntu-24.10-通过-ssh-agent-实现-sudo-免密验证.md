@@ -1,7 +1,8 @@
 ---
-title: Ubuntu 24.10 通过 ssh-agent 实现 sudo 免密验证
+title: Ubuntu 24.10 通过 ssh-agent 透传实现 sudo 免密验证与 TouchID 指纹验证
 date: 2025-03-26T06:54:16.439Z
 ---
+
 
 ## 前述
 
