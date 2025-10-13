@@ -3,6 +3,7 @@ title: Hanvon N10 mini (2022) 探索汇报
 date: 2025-10-12T18:36:37.066Z
 ---
 
+
 国庆爆肝通关 P5R 一周目，要上课了才从书包里发现我当时鬼迷心窍买了的写字板。考虑到目前应该有资源探索其上的软硬件设施，便花了数天与夜晚捣鼓了个七七八八，才得以在此时将这些结果化为文字。
 
 ## 设备简介
@@ -443,3 +444,12 @@ pub fn parse(bytes: [9]u8) Frame {
 之后我会考虑把现有的工作结果打成 Magisk 模块，那样部署就轻松多了，尽管现在本地的代码都未能整理完毕。在这之后我想我应该能实现一个简单的数位板之类的，不过在那之前还有很多的工作要做，比如说把现有 zig 实现重写到 rust 然后我们可以用 uniffi 生成 JNI Binding 不会那么痛苦，配套的 Android App 和 MacOS 应用等，此外可能还得用类似 DriveDroid 的思路，以减小软件接触面之类的。  
 `libpaintworker` 和 `libhw_PenEngine` 似乎还具备了直接往墨水屏设备上绘制的能力（tangoapp 的 scrcpy 看不到正被绘制的笔迹），但我目前用不到这个能力，改天有点子了可以再来开发。  
 无论如何，这些都是很久之后的事情了，后面代码整理完了我再在这里唠叨。
+
+## 重要引用
+
+本文提及的某些重要步骤严重依赖于这些文本提供的教程。
+
+---
+
+- Hommey, M. (2012, August 6). _Building a Linux Kernel Module without the Exact Kernel Headers_. Glandium.Org. https://glandium.org/blog/?p=2664
+- Wu, J. (2024, November 8). _Magisk Tools_. Magisk Documentation. https://topjohnwu.github.io/Magisk/tools.html
